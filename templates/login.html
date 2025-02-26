@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script>
+        let videoStream;
+        function startVideo() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    videoStream = stream;
+                    document.getElementById("video").srcObject = stream;
+                })
+                .catch(error => {
+                    console.error("Error accessing the webcam:", error);
+                    alert("Unable to access webcam.");
+                });
+        }
+
+        function captureImage() {
+            const canvas = document.createElement("canvas");
+            const video = document.getElementById("video");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL("image/jpeg");
+        }
+
+        function submitLoginForm(event) {
+            event.preventDefault();
+            const image = captureImage();
+            const formData = new FormData(event.target);
+            formData.append("image", image);
+
+            fetch("/login", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/exam";
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error during login:", error);
+                alert("An error occurred. Please try again.");
+            });
+        }
+
+        window.onload = startVideo;
+    </script>
+</head>
+<body>
+    <h1>Login</h1>
+
+    <form id="login-form" onsubmit="submitLoginForm(event)">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required><br><br>
+
+        <label for="roll_number">Roll Number:</label>
+        <input type="text" name="roll_number" id="roll_number" required><br><br>
+
+        <video id="video" autoplay></video><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

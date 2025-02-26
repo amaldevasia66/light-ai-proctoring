@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        video, canvas {
+            border: 2px solid black;
+            width: 320px;
+            height: 240px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Register</h1>
+    <form id="registrationForm">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required><br><br>
+
+        <label for="roll_number">Roll Number:</label>
+        <input type="text" name="roll_number" id="roll_number" required><br><br>
+    </form>
+
+    <!-- Live Video Feed -->
+    <h2>Live Camera</h2>
+    <video id="video" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <button id="captureButton">Capture Face</button>
+
+    <script>
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('captureButton');
+
+        // Access the user's webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => video.srcObject = stream)
+            .catch(err => console.error("Error accessing webcam: ", err));
+
+        captureButton.addEventListener('click', () => {
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 320;
+            canvas.height = 240;
+
+            // Draw the video frame onto the canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas to a Base64 image
+            const imageData = canvas.toDataURL('image/jpeg');
+
+            // Get name and roll number from input fields
+            const name = document.getElementById('name').value;
+            const rollNumber = document.getElementById('roll_number').value;
+
+            // Validation check
+            if (!name || !rollNumber) {
+                alert("Please fill in both Name and Roll Number.");
+                return;
+            }
+
+            // Send the image, name, and roll number to the server
+            fetch('/capture_face', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    image: imageData,
+                    roll_number: rollNumber,
+                    name: name
+                })
+            })
+            .then(response => response.text())
+            .then(response => {
+                alert(response);
+                window.location.href = '/';  // Redirect to the home page
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

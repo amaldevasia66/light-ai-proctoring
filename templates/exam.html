@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Exam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        .video-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #video-stream {
+            width: 80%;
+            max-width: 800px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            resize: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Online Exam</h1>
+
+    <!-- Video Streaming -->
+    <div class="video-container">
+        <h2>Camera Feed</h2>
+        <!-- Video Stream from Flask -->
+        <img id="video-stream" src="{{ url_for('video_feed') }}" alt="Live video feed" />
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <!-- Exam Form -->
+    <form action="/exam" method="post" class="form-container">
+        <label for="q1">1. What is the capital of France?</label><br>
+        <textarea id="q1" name="q1" rows="2" required></textarea><br><br>
+
+        <label for="q2">2. What is Object-Oriented Programming?</label><br>
+        <textarea id="q2" name="q2" rows="2" required></textarea><br><br>
+
+        <label for="q3">3. Write a function to calculate factorial.</label><br>
+        <textarea id="q3" name="q3" rows="2" required></textarea><br><br>
+
+        <button type="submit">Submit Exam</button>
+    </form>
+
+</body>
+</html>
